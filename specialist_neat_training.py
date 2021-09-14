@@ -15,14 +15,15 @@ import neat
 
 class Individual(Controller):
     def __init__(self, genome, config):
+        # Build NN from description provided by genome.
         self.net = neat.nn.FeedForwardNetwork.create(genome, config)
 
     def control(self, state, controller=None):
+        # Request network output as 5-tuple given state vector
         out = self.net.activate(state)
-        #action = [0, 0, 0, 0, 0]
-        #action[np.argmax(out)] = 1
-        return np.array(out) > .5 #action
-
+        
+        # Allow multiple actions at once
+        return np.array(out) > .5
 
 
 def evaluate_individual(genome, config, enemy=1, headless=True):
