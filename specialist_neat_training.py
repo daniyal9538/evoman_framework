@@ -19,9 +19,9 @@ class Individual(Controller):
 
     def control(self, state, controller=None):
         out = self.net.activate(state)
-        action = [0, 0, 0, 0, 0]
-        action[np.argmax(out)] = 1
-        return action
+        #action = [0, 0, 0, 0, 0]
+        #action[np.argmax(out)] = 1
+        return np.array(out) > .5 #action
 
 
 
@@ -63,6 +63,8 @@ def evaluate_individual(genome, config, enemy=1, headless=True):
 
 def evaluate_population(population, config):
     """ Wrapper function to evaluate all individuals in the population one by one. """
+    print("New generation:")
+
     # Run individual evaluation function on individs in population (and store fitnesses).
     fitnesses = []
     for ind_id, ind in population:
