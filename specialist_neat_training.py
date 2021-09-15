@@ -1,99 +1,125 @@
 """
-    Filename:   test_specialist_agent_training.py
-    Author(s):  Thomas Bellucci
-    Assignment: Task 1 - Evolutionary Computing
+    Filename:    specialist_neat_training.py
+    Author(s):   Thomas Bellucci
+    Assignment:  Task 1 - Evolutionary Computing
+    Description: Contains the NEAT implementation (AE 1) for
+                 the Evoman assignment (Task I).
 """
+# Imports
 import os, sys
-sys.path.insert(0, 'evoman') 
+sys.path.insert(0, 'evoman')
 from environment import Environment
 from controller import Controller
-import numpy as np
 import pickle
+import numpy
 import neat
+import tqdm
+import glob
 
 
-
+""" Player controller using NEAT
+"""
 class Individual(Controller):
     def __init__(self, genome, config):
-        # Build NN from description provided by genome.
+        # Build network from NEAT genome (the genotype).
         self.net = neat.nn.FeedForwardNetwork.create(genome, config)
 
-    def control(self, state, controller=None):
-        # Request network output as 5-tuple given state vector
+    def control(self, state, _):
+        # Feed state vector through network.
         out = self.net.activate(state)
         
         # Allow multiple actions at once
-        return np.array(out) > .5
+        return numpy.array(out) > .5
 
 
-def evaluate_individual(genome, config, enemy=1, headless=True):
-    """ Evaluates a genome by simulating a single game with the
-        current individual (represented by the genome).
+def evaluate_individual(genome, config, enemy, show=False):
+    """ Evaluates the phenotype-converted genome (genotype)
+        by simulating a single round of Evoman.
     """
-    # Set up individual (controller) from genome.
+    # Build individual (controller/phenotype) from genome.
     controller = Individual(genome, config)
-    
-    # Set headless = True to speed up learning.
-    if headless:
+
+    # Set show = False to hide visuals and speed up learning.
+    if not show:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
-
-    # Set directory
-    experiment_name = 'dummy_demo'
-    if not os.path.exists(experiment_name):
-        os.makedirs(experiment_name)
-
-    # Init environment (set to realtime if blitted)
-    if headless:
-        env = Environment(experiment_name=experiment_name,
+        env = Environment(experiment_name=None,
                           player_controller=controller,
                           speed='fastest',
                           logs='off')
+
+    # Set show = True for real time game on screen (for testing).
     else:
-        env = Environment(experiment_name=experiment_name,
+        env = Environment(experiment_name=None,
                           player_controller=controller,
                           speed='normal',
                           logs='off')
 
-    # Select Enemy (1 to 8)
+    # Select enemy (1 to 8)
     env.update_parameter('enemies', [enemy])
 
     # Simulate game.
-    fitness, player_life, enemy_life, game_duration = env.play("unused")
-    return fitness
+    fitness, player_life, enemy_life, game_duration = env.play()
+    indv_gain = player_life - enemy_life
+    return fitness, indv_gain
 
 
 def evaluate_population(population, config):
-    """ Wrapper function to evaluate all individuals in the population one by one. """
-    print("New generation:")
+    """ Wrapper function to evaluate all individuals
+        in the population one by one.
+    """
+    global current_enemy, current_run, current_outfile
+    
+    # Run fitness function on all individuals in population (and store fitnesses).
+    fitness_scores = []
+    for _, ind in tqdm.tqdm(population):
+        ind.fitness, _ = evaluate_individual(ind, config, current_enemy)
+        fitness_scores.append(ind.fitness)
 
-    # Run individual evaluation function on individs in population (and store fitnesses).
-    fitnesses = []
-    for ind_id, ind in population:
-        ind.fitness = evaluate_individual(ind, config)
-        fitnesses += [ind.fitness]
+    # Print progress
+    avg_fitness = numpy.mean(fitness_scores)
+    max_fitness = numpy.max(fitness_scores)
+    print("Avg:", avg_fitness, max_fitness)
 
-    # Print some stats
-    print("Fitness: Avg:", np.mean(fitnesses), "\tStd: fitness =", np.std(fitnesses))
-
-
+    # Write mean and max fitness stats of population to file.
+    with open(current_outfile, "a") as f:
+        f.write("{},{},{},{}\n".format(avg_fitness, max_fitness, current_enemy, current_run))
 
 
-def run(config_file):
-    # Load configuration file.
-    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
-                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                         config_file)
-
-    # Init population and optimize its individuals.
-    p = neat.Population(config)
-    winner = p.run(evaluate_population, 20)
-
-    # Store winner as Individual
-    with open("best_neat_solution", "wb") as f:
-        pickle.dump(winner, f)
 
 if __name__ == '__main__':
-    run("neat.config")
+
+    # SETTINGS!
+    RUNS = 2
+    GENERATIONS = 10
+    ENEMIES = [1]
+    
+    # Load configuration file.
+    config = neat.Config(neat.DefaultGenome,
+                         neat.DefaultReproduction,
+                         neat.DefaultSpeciesSet,
+                         neat.DefaultStagnation,
+                         "neat.config")
+
+    # Run EA for 3 enemies and 10 runs.
+    for current_enemy in ENEMIES:
+        for current_run in range(1, RUNS + 1):
+
+            # Write header of output file (Wipe when it already exists).
+            current_outfile = "neat_stats_run-{}_enemy-{}.csv".format(current_run, current_enemy)
+            if os.path.exists(current_outfile):
+               os.remove(current_outfile)
+               
+            with open(current_outfile, "a") as f:
+                f.write("mean,max,enemy,run\n")
+            
+            # Set up population and run EA for .
+            pop = neat.Population(config)
+            winner = pop.run(evaluate_population, GENERATIONS)
+
+            # Store winner genome using pickle.
+            current_winner_file = "neat_best_run-{}_enemy-{}.pkl".format(current_run, current_enemy)
+            with open(current_winner_file, "wb") as f:
+                pickle.dump(winner, f)
 
     
 
