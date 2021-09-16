@@ -1,5 +1,5 @@
 """
-    Filename:   test_specialist_agent_training.py
+    Filename:   specialist_neat_test.py
     Author(s):  Thomas Bellucci
     Assignment: Task 1 - Evolutionary Computing
 """
@@ -7,21 +7,28 @@
 import pickle
 import neat
 
-from specialist_neat_training import Individual, evaluate_individual
+from specialist_neat_training import Individual, EvomanEnvironment
 
 
 if __name__ == "__main__":
+    ENEMY = 1
+    RUN = 1
+    
     # Load configuration file.
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          "neat.config")
 
     # Load (best) genome.
-    with open("best_neat_solution", "rb") as f:
+    filename = "neat_best_run-{}_enemy-{}.pkl".format(RUN, ENEMY)
+    with open(filename, "rb") as f:
         genome = pickle.load(f)
 
+    # Run game
+    env = EvomanEnvironment(ENEMY, RUN)
     while True:
-        evaluate_individual(genome, config, headless=False)
+        fitness, gain = env.evaluate_individual(genome, config, show=True)
+        print(fitness, gain)
 
     
 
