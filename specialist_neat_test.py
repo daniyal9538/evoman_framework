@@ -11,7 +11,7 @@ from specialist_neat_training import Individual, EvomanEnvironment
 
 
 if __name__ == "__main__":
-    ENEMY = 1
+    ENEMY = 4
     RUN = 1
     
     # Load configuration file.

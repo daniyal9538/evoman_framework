@@ -17,7 +17,7 @@ import tqdm
 import glob
 
 
-""" Player controller using NEAT
+""" Implements the player controller using NEAT.
 """
 class Individual(Controller):
     def __init__(self, genome, config):
@@ -32,7 +32,9 @@ class Individual(Controller):
         return numpy.array(out) > .5
 
 
-""" Evoman Environment
+""" Wrapper around the Evoman game environment. It contains the
+    fitness function (evaluate_individual) and writes out per-
+    generation stats for a run of the algorithm.
 """
 class EvomanEnvironment:
     def __init__(self, enemy, run, outfile=None):
@@ -40,31 +42,28 @@ class EvomanEnvironment:
         self.run = run
         self.outfile = outfile
 
-        # Create outfile for stats when desired.
-        if outfile is not None:
-            if os.path.exists(outfile):
-                os.remove(outfile)
-                   
-            with open(outfile, "a") as f:
+        # Create outfile for stats when an outfile is given.
+        if outfile is not None: 
+            with open(outfile, "w") as f: # Create new file with header
                 f.write("mean,max,enemy,run\n")
             
         
     def evaluate_individual(self, genome, config, show=False):
-        """ Evaluates the phenotype-converted genome (genotype)
-            by simulating a single round of Evoman.
+        """ Evaluates the phenotype-converted genome (genotype) by simulating
+            a single round of Evoman.
         """
         # Build individual (controller/phenotype) from genome.
         controller = Individual(genome, config)
 
         # Set show = False to hide visuals and speed up learning.
         if not show:
-            os.environ["SDL_VIDEODRIVER"] = "dummy"
+            os.environ["SDL_VIDEODRIVER"] = 'dummy'
             env = Environment(experiment_name=None,
                               player_controller=controller,
                               speed='fastest',
                               logs='off')
 
-        # Set show = True for real time game on screen (for testing).
+        # Set show = True for real time gameplay (for testing).
         else:
             env = Environment(experiment_name=None,
                               player_controller=controller,
@@ -81,8 +80,7 @@ class EvomanEnvironment:
 
 
     def evaluate_population(self, population, config):
-        """ Wrapper function to evaluate all individuals
-            in the population one by one.
+        """ Wrapper function to evaluate all individuals in the population.
         """
         # Run fitness function on all individuals in population (and store fitnesses).
         fitness_scores = []
@@ -105,9 +103,9 @@ class EvomanEnvironment:
 if __name__ == '__main__':
 
     # SETTINGS!
-    RUNS = 4
-    GENERATIONS = 10
-    ENEMIES = [1]
+    RUNS = 1
+    GENERATIONS = 15
+    ENEMIES = [4]
     
     # Load configuration file.
     config = neat.Config(neat.DefaultGenome,
