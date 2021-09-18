@@ -6,6 +6,8 @@
                  the Evoman assignment (Task I).
 """
 # Imports
+from ast import parse
+from msilib.schema import Control
 import os, sys
 sys.path.insert(0, 'evoman')
 from environment import Environment
@@ -14,6 +16,7 @@ import pickle
 import numpy
 import neat
 import tqdm
+import argparse
 import glob
 
 
@@ -32,15 +35,24 @@ class Individual(Controller):
         return numpy.array(out) > .5
 
 
+class Individual_RNN(Controller):
+    def __init__(self, genome, config):
+        self.net = neat.nn.RecurrentNetwork.create(genome, config)
+
+    def control(self, state, _):
+        out=self.net.activate(state)
+        return numpy.array(out) > .5
+
 """ Wrapper around the Evoman game environment. It contains the
     fitness function (evaluate_individual) and writes out per-
     generation stats for a run of the algorithm.
 """
 class EvomanEnvironment:
-    def __init__(self, enemy, run, outfile=None):
+    def __init__(self, enemy, run, outfile=None,Individual = Individual):
         self.enemy = enemy
         self.run = run
         self.outfile = outfile
+        self.Individual = Individual
 
         # Create outfile for stats when an outfile is given.
         if outfile is not None: 
@@ -53,7 +65,7 @@ class EvomanEnvironment:
             a single round of Evoman.
         """
         # Build individual (controller/phenotype) from genome.
-        controller = Individual(genome, config)
+        controller = self.Individual(genome, config)
 
         # Set show = False to hide visuals and speed up learning.
         if not show:
@@ -101,11 +113,21 @@ class EvomanEnvironment:
 
 
 if __name__ == '__main__':
+    # Argument parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--runs', help='number of runs per enemy', default=1, type = int)
+    parser.add_argument('--generations', help = 'number of generations EA will run', default=15,type=int)
+    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default=4)
+    parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: rnn)', default=1,type=int)
+
+    args = parser.parse_args()
+ 
 
     # SETTINGS!
-    RUNS = 1
-    GENERATIONS = 15
-    ENEMIES = [4]
+    RUNS = args.runs
+    GENERATIONS = args.generations
+    ENEMIES = [int(i) for i in str(args.enemies).split(',')]
+    INDIVIDUAL_TYPE = args.individual_type
     
     # Load configuration file.
     config = neat.Config(neat.DefaultGenome,
@@ -117,17 +139,21 @@ if __name__ == '__main__':
     # Run EA for 3 enemies and 10 runs.
     for enemy in ENEMIES:
         for run in range(1, RUNS + 1):
-
+            file_name = "neat_stats_run-{}_enemy-{}-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
             # Setup Evoman environment
-            outfile = "neat_stats_run-{}_enemy-{}.csv".format(run, enemy)
-            env = EvomanEnvironment(enemy, run, outfile)
+            outfile = file_name+'.csv'
+            if INDIVIDUAL_TYPE == 1:
+
+                env = EvomanEnvironment(enemy, run, outfile, Individual=Individual)
+            elif INDIVIDUAL_TYPE == 2:
+                env = EvomanEnvironment(enemy, run, outfile, Individual=Individual_RNN)
             
             # Set up population and run EA for several generations.
             pop = neat.Population(config)
             winner = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            winner_file = "neat_best_run-{}_enemy-{}.pkl".format(run, enemy)
+            winner_file = file_name+'.pkl'
             with open(winner_file, "wb") as f:
                 pickle.dump(winner, f)
 
