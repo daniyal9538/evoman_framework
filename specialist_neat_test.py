@@ -4,7 +4,7 @@
     Assignment: Task 1 - Evolutionary Computing
 """
 
-from evoman_framework.specialist_neat_training import ENEMIES, INDIVIDUAL_TYPE
+# from evoman_framework.specialist_neat_training import ENEMIES, INDIVIDUAL_TYPE
 import pickle
 import argparse
 import neat
@@ -14,7 +14,7 @@ from specialist_neat_training import Individual, EvomanEnvironment, Individual_R
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--best', help='full path to best player', type = int)
+    parser.add_argument('--best', help='full path to best player', type = str)
     # parser.add_argument('--generations', help = 'number of generations EA will run', default=15,type=int)
     # parser.add_argument('--enemies', help = 'comma seperated types of enemies', default=4)
     # parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: rnn)', default=1,type=int)
