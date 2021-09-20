@@ -137,8 +137,8 @@ if __name__ == '__main__':
                 fitnesses = env.evaluate_population(genomes)
                 optimizer.tell([(x,-f) for x,f in fitnesses]) # -1 as EA minimizes fitness func.
 
-            # Extract winner
-            winner = sorted(fitnesses, key=lambda x: x[1])[-1][0]
+            # Extract individual with maximum fitness.
+            winner = max(fitnesses, key=lambda x: x[1])[0]
 
             # Store winner genome using pickle (for later use).
             winner_file = "es_best_run-{}_enemy-{}.pkl".format(run, enemy)
