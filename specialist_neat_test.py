@@ -19,6 +19,10 @@ if __name__ == "__main__":
     INDIVIDUAL_TYPE = config_vars[2]
 
 
+    # ENEMY = 4
+    # RUN = 1
+    # INDIVIDUAL_TYPE = 2
+    
     # Load configuration file.
     if INDIVIDUAL_TYPE == 1:
         config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
@@ -31,6 +35,8 @@ if __name__ == "__main__":
 
     # Load (best) genome.
     with open(FILE, "rb") as f:
+    # filename = "neat_best_"+file_name_extension+".pkl".format(RUN, ENEMY, str(INDIVIDUAL_TYPE))
+    # with open(filename, "rb") as f:
         genome = pickle.load(f)
     print(f'{FILE} succesfully loaded with config:\nEnemy type {ENEMIES}\nNumber of runs: {RUNS}\nIndividual type: {INDIVIDUAL_TYPE}')
 
