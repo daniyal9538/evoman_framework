@@ -11,7 +11,7 @@ from specialist_neat_training import Individual, EvomanEnvironment
 
 
 if __name__ == "__main__":
-    ENEMY = 4
+    ENEMY = 7
     RUN = 1
     INDIVIDUAL_TYPE = 2
     
@@ -21,7 +21,7 @@ if __name__ == "__main__":
                          "neat.config")
 
     # Load (best) genome.
-    filename = "neat_best_"+file_name_extension+".pkl".format(RUN, ENEMY, str(INDIVIDUAL_TYPE))
+    filename = "neat_best_run-{}_enemy-{}_ind-{}.pkl".format(RUN, ENEMY, str(INDIVIDUAL_TYPE))
     with open(filename, "rb") as f:
         genome = pickle.load(f)
 

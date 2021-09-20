@@ -115,9 +115,9 @@ class EvomanEnvironment:
 if __name__ == '__main__':
     # Argument parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--runs', help='number of runs per enemy', default=1, type = int)
-    parser.add_argument('--generations', help = 'number of generations EA will run', default=15,type=int)
-    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default=4)
+    parser.add_argument('--runs', help='number of runs per enemy', default=10, type = int)
+    parser.add_argument('--generations', help = 'number of generations EA will run', default=30,type=int)
+    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default='3, 7, 9')
     parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: rnn)', default=1,type=int)
 
     args = parser.parse_args()
@@ -136,12 +136,10 @@ if __name__ == '__main__':
                          neat.DefaultStagnation,
                          "neat.config")
 
-    file_name_extension = "run-{}_enemy-{}_ind-{}"
-
     # Run EA for 3 enemies and 10 runs.
     for enemy in ENEMIES:
         for run in range(1, RUNS + 1):
-            file_name = "neat_stats_"+file_name_extension.format(run, enemy, str(INDIVIDUAL_TYPE))
+            file_name = "neat_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
             # Setup Evoman environment
             outfile = file_name+'.csv'
             if INDIVIDUAL_TYPE == 1:
@@ -157,7 +155,7 @@ if __name__ == '__main__':
             winner = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            winner_file = "neat_best_"+file_name_extension+".pkl".format(run, enemy, str(INDIVIDUAL_TYPE))
+            winner_file = "neat_best_run-{}_enemy-{}_ind-{}.pkl".format(run, enemy, str(INDIVIDUAL_TYPE))
             with open(winner_file, "wb") as f:
                 pickle.dump(winner, f)
 
