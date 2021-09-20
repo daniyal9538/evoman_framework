@@ -13,6 +13,7 @@ from specialist_neat_training import Individual, EvomanEnvironment
 if __name__ == "__main__":
     ENEMY = 4
     RUN = 1
+    INDIVIDUAL_TYPE = 2
     
     # Load configuration file.
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
@@ -20,7 +21,7 @@ if __name__ == "__main__":
                          "neat.config")
 
     # Load (best) genome.
-    filename = "neat_best_run-{}_enemy-{}.pkl".format(RUN, ENEMY)
+    filename = "neat_best_"+file_name_extension+".pkl".format(RUN, ENEMY, str(INDIVIDUAL_TYPE))
     with open(filename, "rb") as f:
         genome = pickle.load(f)
 
