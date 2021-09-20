@@ -155,7 +155,7 @@ if __name__ == '__main__':
             # Store winner genome using pickle (for later use).
             winner_file = file_name+'.pkl'
             with open(winner_file, "wb") as f:
-                pickle.dump(winner_file, f)
+                pickle.dump(winner, f)
 
     
 

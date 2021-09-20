@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # SETTINGS!
     FILE = args.best
-    segmented_file_name =  FILE.split('-')[1:]
+    segmented_file_name =  FILE.split('-')[-3:]
     config_vars = [int(i[0]) for i in segmented_file_name]
     RUNS = config_vars[0]
     ENEMIES = config_vars[1]
