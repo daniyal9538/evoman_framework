@@ -130,18 +130,12 @@ if __name__ == '__main__':
     ENEMIES = [int(i) for i in str(args.enemies).split(',')]
     INDIVIDUAL_TYPE = args.individual_type
 
-    file_name_extension = "run-{}_enemy-{}_ind-{}"
-
     # Run EA for 3 enemies and 10 runs.
     for enemy in ENEMIES:
         for run in range(1, RUNS + 1):
-<<<<<<< HEAD
-            
-=======
-            file_name = "neat_stats_"+file_name_extension.format(run, enemy, str(INDIVIDUAL_TYPE))
+            file_name = "neat_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
             # Setup Evoman environment
             outfile = file_name+'.csv'
->>>>>>> 3513258 (fix the test and training files)
             if INDIVIDUAL_TYPE == 1:
                 # Load configuration file.
                 config = neat.Config(neat.DefaultGenome,
@@ -180,10 +174,11 @@ if __name__ == '__main__':
             winner = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            winner_file = file_name.replace("stats", "best").format(run, enemy, str(INDIVIDUAL_TYPE))
-            with open(winner_file + ".pkl", "wb") as f:
-            # winner_file = "neat_best_"+file_name_extension+".pkl".format(run, enemy, str(INDIVIDUAL_TYPE))
-            # with open(winner_file, "wb") as f:
+            # winner_file = file_name.replace("stats", "best").format(run, enemy, str(INDIVIDUAL_TYPE))
+            # with open(winner_file + ".pkl", "wb") as f:
+
+            winner_file = "neat_best_run-{}_enemy-{}_ind-{}.pkl".format(run, enemy, str(INDIVIDUAL_TYPE))
+            with open(winner_file, "wb") as f:
                 pickle.dump(winner, f)
 
     

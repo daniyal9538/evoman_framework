@@ -34,9 +34,8 @@ if __name__ == "__main__":
                          "neat_fixed_topology.config")
 
     # Load (best) genome.
-    with open(FILE, "rb") as f:
-    # filename = "neat_best_"+file_name_extension+".pkl".format(RUN, ENEMY, str(INDIVIDUAL_TYPE))
-    # with open(filename, "rb") as f:
+    filename = "neat_best_run-{}_enemy-{}_ind-{}.pkl".format(RUN, ENEMY, str(INDIVIDUAL_TYPE))
+    with open(filename, "rb") as f:
         genome = pickle.load(f)
     print(f'{FILE} succesfully loaded with config:\nEnemy type {ENEMIES}\nNumber of runs: {RUNS}\nIndividual type: {INDIVIDUAL_TYPE}')
 
