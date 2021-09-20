@@ -156,6 +156,9 @@ if __name__ == '__main__':
             winner_file = file_name+'.pkl'
             with open(winner_file, "wb") as f:
                 pickle.dump(winner, f)
+# 
+            print(f'Best player for enemy {enemy} on run {run} and individual {INDIVIDUAL_TYPE} stored at:\n {winner_file}')
+            print(f'CSV file stored at {outfile}')
 
     
 
