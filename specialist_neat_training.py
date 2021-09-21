@@ -117,7 +117,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--runs', help='number of runs per enemy', default=10, type = int)
     parser.add_argument('--generations', help = 'number of generations EA will run', default=30,type=int)
-    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default='3, 7, 9')
+    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default='2')
     parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: rnn)', default=1,type=int)
 
     args = parser.parse_args()
