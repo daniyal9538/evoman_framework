@@ -87,6 +87,9 @@ class EvomanEnvironment:
         # Simulate game.
         fitness, player_life, enemy_life, game_duration = env.play()
         ind_gain = player_life - enemy_life
+
+        if show:
+            print("Fitness: {}, Player life: {}, Enemy life: {}".format(fitness, player_life, enemy_life))
         return fitness, ind_gain
 
 
@@ -158,12 +161,12 @@ if __name__ == '__main__':
             
             # Set up population and run EA for several generations.
             pop = neat.Population(config)
-            best_genome = pop.run(env.evaluate_population, GENERATIONS)
+            winner = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            best_file = file_name.replace("stats", "best").format(run, enemy, str(INDIVIDUAL_TYPE))
-            with open(best_file + ".pkl", "wb") as f:
-                pickle.dump(best_genome, f)
+            winner_file = file_name.replace("stats", "winner").format(run, enemy, str(INDIVIDUAL_TYPE))
+            with open(winner_file + ".pkl", "wb") as f:
+                pickle.dump(winner, f)
 
     
 
