@@ -120,7 +120,7 @@ if __name__ == '__main__':
     parser.add_argument('--runs', help='number of runs per enemy', default=10, type = int)
     parser.add_argument('--generations', help = 'number of generations EA will run', default=30,type=int)
     parser.add_argument('--enemies', help = 'comma seperated types of enemies', default='7')
-    parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: ff_fixed_topo)', default=3,type=int)
+    parser.add_argument('--individual_type', help='type of individual (nn) (1: neat, 2: please dont, 3: neat_fixed_topo)', default=3,type=int)
     args = parser.parse_args()
  
 
