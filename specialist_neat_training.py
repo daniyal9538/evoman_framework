@@ -1,13 +1,12 @@
 """
     Filename:    specialist_neat_training.py
-    Author(s):   Thomas Bellucci
+    Author(s):   Thomas Bellucci, Daniyal Selani, Lena Malnatsky
     Assignment:  Task 1 - Evolutionary Computing
-    Description: Contains the NEAT implementation (AE 1) for
+    Description: Contains the NEAT implementations for
                  the Evoman assignment (Task I).
 """
 # Imports
-from ast import parse
-from msilib.schema import Control
+
 import os, sys
 sys.path.insert(0, 'evoman')
 from environment import Environment
@@ -31,28 +30,28 @@ class Individual(Controller):
         # Feed state vector (20 inputs) through network.
         out = self.net.activate(state)
         
-        # Return binary vector of actions (allow multiple at once).
+        # Return binary vector of actions (allow multiple actions at once).
         return numpy.array(out) > .5
 
 
-class Individual_RNN(Controller):
-    def __init__(self, genome, config):
-        self.net = neat.nn.RecurrentNetwork.create(genome, config)
-
-    def control(self, state, _):
-        out=self.net.activate(state)
-        return numpy.array(out) > .5
+#class Individual_RNN(Controller):
+#    def __init__(self, genome, config):
+#        self.net = neat.nn.RecurrentNetwork.create(genome, config)
+#
+#    def control(self, state, _):
+#        out=self.net.activate(state)
+#        return numpy.array(out) > .5
 
 """ Wrapper around the Evoman game environment. It contains the
     fitness function (evaluate_individual) and writes out per-
     generation stats for a run of the algorithm.
 """
 class EvomanEnvironment:
-    def __init__(self, enemy, run, outfile=None,Individual = Individual):
+    def __init__(self, enemy, run, outfile=None, Individual = Individual):
         self.enemy = enemy
         self.run = run
         self.outfile = outfile
-        self.Individual = Individual
+        self.individual = Individual
 
         # Create outfile for stats when an outfile is given.
         if outfile is not None: 
@@ -65,7 +64,7 @@ class EvomanEnvironment:
             a single round of Evoman.
         """
         # Build individual (controller/phenotype) from genome.
-        controller = self.Individual(genome, config)
+        controller = self.individual(genome, config)
 
         # Set show = False to hide visuals and speed up learning.
         if not show:
@@ -115,11 +114,10 @@ class EvomanEnvironment:
 if __name__ == '__main__':
     # Argument parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--runs', help='number of runs per enemy', default=1, type = int)
-    parser.add_argument('--generations', help = 'number of generations EA will run', default=15,type=int)
-    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default=4)
-    parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: rnn)', default=1,type=int)
-
+    parser.add_argument('--runs', help='number of runs per enemy', default=10, type = int)
+    parser.add_argument('--generations', help = 'number of generations EA will run', default=30,type=int)
+    parser.add_argument('--enemies', help = 'comma seperated types of enemies', default='7')
+    parser.add_argument('--individual_type', help='type of individual (nn) (1: ff nn, 2: ff_fixed_topo)', default=3,type=int)
     args = parser.parse_args()
  
 
@@ -128,37 +126,44 @@ if __name__ == '__main__':
     GENERATIONS = args.generations
     ENEMIES = [int(i) for i in str(args.enemies).split(',')]
     INDIVIDUAL_TYPE = args.individual_type
-    
-    # Load configuration file.
-    config = neat.Config(neat.DefaultGenome,
-                         neat.DefaultReproduction,
-                         neat.DefaultSpeciesSet,
-                         neat.DefaultStagnation,
-                         "neat.config")
 
     # Run EA for 3 enemies and 10 runs.
     for enemy in ENEMIES:
         for run in range(1, RUNS + 1):
-            file_name = "neat_stats_run-{}_enemy-{}-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
-            # Setup Evoman environment
-            outfile = file_name+'.csv'
+            
             if INDIVIDUAL_TYPE == 1:
+                # Load configuration file.
+                config = neat.Config(neat.DefaultGenome,
+                                     neat.DefaultReproduction,
+                                     neat.DefaultSpeciesSet,
+                                     neat.DefaultStagnation,
+                                     "neat.config")
 
-                env = EvomanEnvironment(enemy, run, outfile, Individual=Individual)
+                file_name = "neat_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
+                env = EvomanEnvironment(enemy, run, file_name + '.csv', Individual=Individual)
+                print("Training with standard NEAT")
+
             elif INDIVIDUAL_TYPE == 2:
-                env = EvomanEnvironment(enemy, run, outfile, Individual=Individual_RNN)
+                # Load the other configuration file.
+                config = neat.Config(neat.DefaultGenome,
+                                     neat.DefaultReproduction,
+                                     neat.DefaultSpeciesSet,
+                                     neat.DefaultStagnation,
+                                     "neat_fixed_topology.config")
+                
+                file_name = "neat_fixed_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
+                env = EvomanEnvironment(enemy, run, file_name + '.csv', Individual=Individual)
+                print("Training with Fixed-topology NEAT")
+
             
             # Set up population and run EA for several generations.
             pop = neat.Population(config)
             winner = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            winner_file = file_name+'.pkl'
-            with open(winner_file, "wb") as f:
+            winner_file = file_name.replace("stats", "winner").format(run, enemy, str(INDIVIDUAL_TYPE))
+            with open(winner_file + ".pkl", "wb") as f:
                 pickle.dump(winner, f)
-# 
-            print(f'Best player for enemy {enemy} on run {run} and individual {INDIVIDUAL_TYPE} stored at:\n {winner_file}')
-            print(f'CSV file stored at {outfile}')
 
     
 
