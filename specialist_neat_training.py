@@ -147,6 +147,9 @@ if __name__ == '__main__':
                 print("Training with standard NEAT")
 
             elif INDIVIDUAL_TYPE == 2:
+                raise Exception("Not implemented CTRNN")
+
+            elif INDIVIDUAL_TYPE == 3:
                 # Load the other configuration file.
                 config = neat.Config(neat.DefaultGenome,
                                      neat.DefaultReproduction,

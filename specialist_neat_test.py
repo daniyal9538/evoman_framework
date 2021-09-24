@@ -1,4 +1,3 @@
-# from evoman_framework.specialist_neat_training import ENEMIES, INDIVIDUAL_TYPE
 import pickle
 import argparse
 import neat
