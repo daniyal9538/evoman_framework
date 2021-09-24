@@ -164,7 +164,7 @@ if __name__ == '__main__':
             winner = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            winner_file = file_name.replace("stats", "winner").format(run, enemy, str(INDIVIDUAL_TYPE))
+            winner_file = file_name.replace("stats", "best").format(run, enemy, str(INDIVIDUAL_TYPE))
             with open(winner_file + ".pkl", "wb") as f:
                 pickle.dump(winner, f)
 
