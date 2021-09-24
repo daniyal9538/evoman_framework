@@ -158,12 +158,12 @@ if __name__ == '__main__':
             
             # Set up population and run EA for several generations.
             pop = neat.Population(config)
-            winner = pop.run(env.evaluate_population, GENERATIONS)
+            best_genome = pop.run(env.evaluate_population, GENERATIONS)
 
             # Store winner genome using pickle (for later use).
-            winner_file = file_name.replace("stats", "winner").format(run, enemy, str(INDIVIDUAL_TYPE))
-            with open(winner_file + ".pkl", "wb") as f:
-                pickle.dump(winner, f)
+            best_file = file_name.replace("stats", "best").format(run, enemy, str(INDIVIDUAL_TYPE))
+            with open(best_file + ".pkl", "wb") as f:
+                pickle.dump(best_genome, f)
 
     
 
