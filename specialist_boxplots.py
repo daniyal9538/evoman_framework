@@ -20,7 +20,7 @@ if __name__ == "__main__":
     ENEMIES = [2, 3, 7]
     INDIVIDUAL_TYPES = [1, 3]
     RUNS = list(range(1, 11))
-    REPEATS = 1
+    REPEATS = 5
 
     for k, enemy in enumerate(ENEMIES):
         print("EA", k)
