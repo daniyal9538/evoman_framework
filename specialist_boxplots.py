@@ -12,6 +12,7 @@ import neat
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.stats import ttest_ind
 
 from specialist_neat_training import Individual, EvomanEnvironment
 
@@ -23,7 +24,7 @@ if __name__ == "__main__":
     REPEATS = 5
 
     for k, enemy in enumerate(ENEMIES):
-        print("EA", k)
+        print("Enemy", enemy)
 
         run_gains = np.zeros((len(INDIVIDUAL_TYPES), len(RUNS)), dtype=float)
         
@@ -58,13 +59,18 @@ if __name__ == "__main__":
                 print(f'run {run}, enemy {enemy}, mean gain {avg_gain}')
                 run_gains[i, j] = avg_gain
 
+        # Perform statistical Welch's t-test
+        T, p = ttest_ind(run_gains[0], run_gains[1], equal_var=False)
+        print("enemy", enemy, "p =", p, "T =", T)
+
         # Format plots
         plt.subplot(1, 3, k+1)
         if k == 0:
             plt.ylabel("Individual Gain")
-        plt.boxplot(run_gains.T)
+        plt.boxplot(run_gains.T, widths=(0.75, 0.75))
         plt.xticks([1, 2], ["NEAT", "Fixed\nNEAT"])
         plt.ylim((-20, 110))
+        plt.title("Enemy {}".format(enemy))
     plt.show()
     
 
