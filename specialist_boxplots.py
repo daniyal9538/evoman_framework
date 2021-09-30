@@ -42,8 +42,10 @@ if __name__ == "__main__":
 
             # Loop through runs
             for j, run in enumerate(RUNS):
-
-                filename = "solutions/neat_best_run-{}_enemy-{}_ind-{}.pkl".format(run, enemy, ind_type)
+                if ind_type == 1:
+                    filename = "neat_best_not_fixed_topology/neat_best_run-{}_enemy-{}_ind-{}.pkl".format(run, enemy, ind_type)
+                else:
+                    filename = "neat_best_fixed_topology/neat_fixed_best_run-{}_enemy-{}_ind-{}.pkl".format(run, enemy, ind_type)
                 with open(filename, "rb") as f:
                     genome = pickle.load(f)
 
