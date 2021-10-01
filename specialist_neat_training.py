@@ -51,8 +51,8 @@ class EvomanEnvironment:
             
         
     def evaluate_individual(self, genome, config, show=False):
-        """ Evaluates the phenotype-converted genome (genotype) by simulating
-            a single round of Evoman.
+        """ Evaluates the phenotype-converted genome (genotype) by
+            simulating a single round of Evoman.
         """
         # Build individual (controller/phenotype) from genome.
         controller = self.individual(genome, config)
@@ -124,7 +124,9 @@ if __name__ == '__main__':
     # Run EA for 3 enemies and 10 runs.
     for enemy in ENEMIES:
         for run in range(1, RUNS + 1):
-            # Setup Evoman environment
+            
+            file_name = "neat_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
+            
             if INDIVIDUAL_TYPE == 1:
                 # Load configuration file.
                 config = neat.Config(neat.DefaultGenome,
@@ -132,10 +134,6 @@ if __name__ == '__main__':
                                      neat.DefaultSpeciesSet,
                                      neat.DefaultStagnation,
                                      "neat.config")
-
-                file_name = "neat_stats_not_fixed_topology/neat_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
-                env = EvomanEnvironment(enemy, run, file_name + '.csv', Individual=Individual)
-                print("Training with standard NEAT")
 
             elif INDIVIDUAL_TYPE == 2:
                 raise Exception("Not implemented CTRNN")
@@ -148,16 +146,15 @@ if __name__ == '__main__':
                                      neat.DefaultStagnation,
                                      "neat_fixed_topology.config")
                 
-                file_name = "neat_stats_fixed_topology/neat_fixed_stats_run-{}_enemy-{}_ind-{}".format(run, enemy, str(INDIVIDUAL_TYPE))
-                env = EvomanEnvironment(enemy, run, file_name + '.csv', Individual=Individual)
-                print("Training with Fixed-topology NEAT")
+            env = EvomanEnvironment(enemy, run, file_name + '.csv', Individual=Individual)
             
             # Set up population and run EA for several generations.
             pop = neat.Population(config)
             winner = pop.run(env.evaluate_population, GENERATIONS)
 
-            winner_file = "neat_best_run-{}_enemy-{}_ind-{}.pkl".format(run, enemy, str(INDIVIDUAL_TYPE))
-            with open(winner_file, "wb") as f:
+            # Store winner genome using pickle (for later use).
+            winner_file = file_name.replace("stats", "best").format(run, enemy, str(INDIVIDUAL_TYPE))
+            with open(winner_file + ".pkl", "wb") as f:
                 pickle.dump(winner, f)
 
     
