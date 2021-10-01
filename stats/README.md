@@ -1,0 +1,1 @@
+This file contains all output files generated during execution of the NEAT algorithm and its fixed-topology variant. These files contain for each algorithm (1 or 3), enemy (2, 3 or 7) and run (1 to 10) the mean and maximum fitness of the individuals in each generation (1 to 30). These files are used to generate figure 2 in the report.
