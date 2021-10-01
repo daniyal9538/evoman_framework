@@ -38,6 +38,8 @@ to simplify the plotting of the solutions and ensure no files were accidentally 
 					and to visually verify the found solutions).
 * specialist_neat_training.py		Runs one of the evolutionary algorithm (NEAT or Fixed NEAT) for x amount 
 					of runs and y generations with user specified enemies and algorithm.
+* specialist_neat_tune.py		Runs NEAT with different types of configuration files (different parameters)
+					to find appropriate hyperparameters that work for the chosen enemies.
 
 
 # Usage
