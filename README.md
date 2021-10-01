@@ -46,9 +46,11 @@ to simplify the plotting of the solutions and ensure no files were accidentally 
 To run the standard NEAT algorithm with the settings used by us in the report, use the following command:
 
 Windows:
+
 $ py -3 specialist_neat_training.py --runs=10 --generations=30 --enemies=2,3,7 --individual_type=1
 
 Ubuntu:
+
 $ python3 specialist_neat_training.py --runs=10 --generations=30 --enemies=2,3,7 --individual_type=1
 
 This runs the NEAT algorithm for 30 generations, 10 times on enemies 2, 3 and 7. To select the second NEAT 
@@ -60,10 +62,12 @@ To visualize the progress plots and boxplots, replace the solutions in \solution
 with the newly generated files. Then simply run the following command:
 
 Windows:
+
 $ py -3 specialist_boxplot.py
 $ py -3 specialist_fitness_plots.py
 
 Ubuntu:
+
 $ python3 specialist_boxplot.py
 $ python3 specialist_fitness_plots.py
 
@@ -73,8 +77,10 @@ To run a found solution in the environment, simply execute the following command
 (IND), enemy and run in the file itself):
 
 Windows:
+
 $ py -3 specialist_neat_test.py
 
 Ubuntu:
+
 $ python3 specialist_neat_test.py
 
