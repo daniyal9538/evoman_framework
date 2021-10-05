@@ -3,7 +3,7 @@
     Author(s):  Thomas Bellucci
     Assignment: Task 1 - Evolutionary Computing
 """
-
+# comment
 import pickle
 import neat
 import numpy as np
